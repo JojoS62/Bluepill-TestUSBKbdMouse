@@ -1,0 +1,83 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "type": "shell",
+    "problemMatcher": {
+        "owner": "cpp",
+        "fileLocation":"absolute",
+        "pattern": {
+            "regexp": "\\[(Warning|Error)\\] (.*):(\\d+):(\\d+):(.*)",
+            "severity": 1,
+            "file": 2,
+            "line": 3,
+            "column": 4,
+            "message": 5
+        }
+    },
+    "presentation": {
+        "clear": true,
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false
+    },
+    "tasks": [
+        {
+            "label": "compile release all",
+            "group": "build",
+            "command": "mbed",
+            "args": [
+                "compile",
+                "-c",
+                "--profile",
+                "release"
+            ]
+        },
+        {
+            "label": "compile release",
+            "group": "build",
+            "command": "mbed",
+            "args": [
+                "compile",
+                "--profile",
+                "release"
+            ]
+        },
+        {
+            "label": "compile debug",
+            "group": "build",
+            "command": "mbed",
+            "args": [
+                "compile",
+                "--profile",
+                "debug"
+            ]
+        },
+        {
+            "label": "compile develop",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "command": "mbed",
+            "args": [
+                "compile",
+                "--profile",
+                "develop"
+            ]
+        },
+        {
+            "label": "echo",
+            "type": "shell",
+            "command": "echo \n\rworksspaceFolder: ${workspaceFolder}\n\rworkspaceFolderBasename: ${workspaceFolderBasename}"
+        },
+        {
+            "label": "list config options",
+            "group": "build",
+            "command": "mbed",
+            "args": ["compile", "--config"]
+        }
+    ]
+}
