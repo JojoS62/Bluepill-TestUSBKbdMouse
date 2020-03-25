@@ -26,16 +26,18 @@ SOFTWARE.*
 #include "Encoder.h"
 #include "USBMouseKeyboard.h"
 
+// threshold settings for x/y switch at analog in
 #define ThreshMax   (40+20)
 #define ThreshMin   (40-20)
 
-DigitalOut  led(PC_13);
-Encoder     encoder1(PB_7, PB_8, PB_9);
-AnalogIn    xRaw(A0);
-AnalogIn    yRaw(A1);
-InterruptIn intBtnMute(PB_6);
-bool        flagMute;
+DigitalOut  led(PC_13);                         // onboard LED
+Encoder     encoder1(PB_7, PB_8, PB_9);         // phaseA, phaseB, pushButon pins
+AnalogIn    xRaw(A0);                           // grayhill encoder has analog 0 - 2.5V - 5 V outputs for direction
+AnalogIn    yRaw(A1);                           //   connected via 47k - 47k voltage divider for max. 2.5 V at analog in 
+InterruptIn intBtnMute(PB_6);                   // another pushbutton, showing interrupt usage
+bool        flagMute;                           // USB function must not be called in ISR, use simple flag
 
+// this is the USB class with default arguments, but individual PID/VID could be supplied also
 USBMouseKeyboard hid;
 
 void toggleMute() 
@@ -74,10 +76,12 @@ int main() {
 
         // check mute flag from interrupt in
         if (flagMute) {
-            hid.mediaControl(KEY_MUTE);
+            hid.mediaControl(KEY_MUTE);     // toggle muting
+            wait_ms(10);                    // short debouncing delay
             flagMute = false;
         }
 
+        // use direction switch for relative mouse movement
         // left/right, up/down is analog input. 
         int x = xRaw * 100.0f;                              // read ADCs, convert to integer percent
         int y = yRaw * 100.0f;
